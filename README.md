@@ -25,3 +25,7 @@ If this fails, it can be run with `awk -P -f ssshiitt.awk` in the shell (actuall
 The script reads the ssh config file (at `~/.ssh/config` but this can be changed by modifying the script source) and puts its contents in various arrays.
 From these arrays, a list of hostnames with preceding numbers is displayed.
 By selecting the appropriate number, an ssh connection to the corresponding host can be established.
+
+The host list for selection is ordered by last use: the most recently used host is on position 1, the previous on 2, etc.
+This list is saved as `~/.ssh/.config.order` (hardcoded in the script, but of course changeable).
+It is displayed in descending order, i.e position 1 is at the bottom of the list, to show the most used hosts close to where the selection is entered.
