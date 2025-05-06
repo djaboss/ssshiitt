@@ -7,22 +7,31 @@ function showhelp( ) {
  print "      (can also be used to show short host info by aborting)"
  print "c[onfig]: show names of configuration files"
  print "f[ull]: show full config data for a host"
- print "q[uit] (or x): quit program"
+ print "q[uit] or .: quit program"
  print "help or empty line: show this help"
 }
 
 # select a host from list and launch ssh
 function gohost(  hn, un, sshc ) {
+# get hostname
  hn=selection( iorder, hostname )
+# empty selection: abort
  if( hn != "" ) {
   print "preparing for 'ssh " hn "' as " hostinfo[hn]
   printf " other username, empty for same, or . to abort> "
   getline un
   if( un == "." ) return
+# default: ssh hostname
   if( un == "" ) sshc=sshcmd " " hn
+# else set explicit username
   else sshc=sshcmd " -u " un " " hn
+  print "launching command " sshc
   system( sshc )
   print ""
+# update config order
+  saveorder( hn )
+# re-read configuration to update order
+  entries=parscfg()
  }
 }
 
@@ -120,12 +129,25 @@ function parscfg(  il, oi, host, aun, ahn ) {
  return oi
 }
 
+# save config order
+function saveorder( hn,  on ) {
+# last used hostname will be on top of list
+ print hn > cfgord
+# all others will come after
+ for( i=1; i <= entries; ++i ) {
+  on=iorder[i]
+  if( on != hn ) print on >> cfgord
+ }
+ close( cfgord )
+}
+
 BEGIN {
 home=ENVIRON["HOME"]
 sshcmd="ssh"
 if( cfg == "" ) cfg=home "/.ssh/config"
 if( cfgord == "" ) cfgord=home "/.ssh/.config.order"
-print "found " parscfg() " host names"
+entries=parscfg()
+print "found " entries " host names"
 cmd="help"
 while( cmd != "quit" ) {
  if( match( cmd, /^[fF]/ ) ) {
@@ -141,7 +163,7 @@ while( cmd != "quit" ) {
   print " order: " cfgord
  }
  if( cmd == "help" ) showhelp()
- if( match( cmd, /^[qQxX]/ ) ) cmd="quit"
+ if( match( cmd, /^[qQ.]/ ) ) cmd="quit"
  else {
   printf ">>> "
   getline cmd
