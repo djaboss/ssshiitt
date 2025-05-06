@@ -1,12 +1,13 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;3 BombasticBullcrap"
+ print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;4 BombasticBullcrap"
  print "start ssh connections interactively in the terminal"
  print ""
  print "g[o]: select a host and ssh to it"
  print "      (can also be used to show short host info by aborting)"
  print "c[onfig]: show names of configuration files"
- print "f[ull]: show full config data for a host"
+ print "s[how]: show full config data for a host"
+ print "a[ll]: show full config data for all hosts"
  print "q[uit] or .: quit program"
  print "help or empty line: show this help"
 }
@@ -150,9 +151,10 @@ entries=parscfg()
 print "found " entries " host names"
 cmd="help"
 while( cmd != "quit" ) {
- if( match( cmd, /^[fF]/ ) ) {
+ if( match( cmd, /^[sS]/ ) ) {
   print config[selection( iorder, hostinfo )]
  }
+ if( match( cmd, /^[aA]/ ) ) for( hn in config ) print hn config[hn]
  if( match( cmd, /^[gG]/ ) ) {
   gohost()
 ### if you replace "help" by "quit", script will finish afterwards
