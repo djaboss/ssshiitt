@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;4 BombasticBullcrap"
+ print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;5 BombasticBullcrap"
  print "start ssh connections interactively in the terminal"
  print ""
  print "g[o]: select a host and ssh to it"
@@ -12,6 +12,12 @@ function showhelp( ) {
  print "help or empty line: show this help"
 }
 
+function finish( ) {
+ print ""
+ print ":: script aborted ::"
+ exit
+}
+
 # select a host from list and launch ssh
 function gohost(  hn, un, sshc ) {
 # get hostname
@@ -20,7 +26,7 @@ function gohost(  hn, un, sshc ) {
  if( hn != "" ) {
   print "preparing for 'ssh " hn "' as " hostinfo[hn]
   printf " other username, empty for same, or . to abort> "
-  getline un
+  if( 1 != getline un ) finish()
   if( un == "." ) return
 # default: ssh hostname
   if( un == "" ) sshc=sshcmd " " hn
@@ -48,7 +54,7 @@ function selection( selarr, infos,  al, ip ) {
 # display selection array in descending order
   for( i=al ; i > 0 ; --i ) printf "%4d  %s  %s\n", i, selarr[i], infos[selarr[i]]
   printf "please choose (. to abort)> "
-  getline ip
+  if( 1 != getline un ) finish()
 # stay in loop if input does not exist in array
   if( ip != "." && selarr[ip] == "" ) ip=""
  }
@@ -168,7 +174,7 @@ while( cmd != "quit" ) {
  if( match( cmd, /^[qQ.]/ ) ) cmd="quit"
  else {
   printf ">>> "
-  getline cmd
+  if( 1 != getline cmd ) finish()
   if( cmd == "" ) cmd="help"
   }
  }

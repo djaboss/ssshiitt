@@ -29,3 +29,5 @@ By selecting the appropriate number, an ssh connection to the corresponding host
 The host list for selection is ordered by last use: the most recently used host is on position 1, the previous on 2, etc.
 This list is saved as `~/.ssh/.config.order` (hardcoded in the script, but of course changeable).
 It is displayed in descending order, i.e position 1 is at the bottom of the list, to show the most used hosts close to where the selection is entered.
+
+*Note:* CTRL-D at a prompt closes STDIN and therefore cuts off the script from keyboard control. This is catched, but the script will then print an abort warning and immediately exit, as it becomes uncontrollable.
