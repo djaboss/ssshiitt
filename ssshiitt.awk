@@ -160,7 +160,7 @@ while( cmd != "quit" ) {
  if( match( cmd, /^[sS]/ ) ) {
   print config[selection( iorder, hostinfo )]
  }
- if( match( cmd, /^[aA]/ ) ) for( hn in config ) print hn config[hn]
+ if( match( cmd, /^[aA]/ ) ) for( hn in config ) print "- " hn " " config[hn]
  if( match( cmd, /^[gG]/ ) ) {
   gohost()
 ### if you replace "help" by "quit", script will finish afterwards
