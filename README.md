@@ -6,8 +6,9 @@
 
 *POSIX awk version of a terminal interactive selection script for ssh config*
 
-Most of it should be self-explanatory; in addition, there is also a short
-help given when the script is launched.
+The script immediately starts with the "go" command for selecting a host for connecting to, as this is its main purpose.
+This can be changed either definitely in the script (search for the line containing 'cmd="go"') or per run by setting the cmd variable on the command line (e.g with a '-v cmd=help' argument).
+In any case, the go command can be aborted by entering a dot (.) so that the script returns to the main command loop (REPL).
 
 ### Installation and Running
 

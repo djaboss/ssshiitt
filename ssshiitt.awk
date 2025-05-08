@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;5 BombasticBullcrap"
+ print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;6 BombasticBullcrap"
  print "start ssh connections interactively in the terminal"
  print ""
  print "g[o]: select a host and ssh to it"
@@ -54,7 +54,7 @@ function selection( selarr, infos,  al, ip ) {
 # display selection array in descending order
   for( i=al ; i > 0 ; --i ) printf "%4d  %s  %s\n", i, selarr[i], infos[selarr[i]]
   printf "please choose (. to abort)> "
-  if( 1 != getline un ) finish()
+  if( 1 != getline ip ) finish()
 # stay in loop if input does not exist in array
   if( ip != "." && selarr[ip] == "" ) ip=""
  }
@@ -155,7 +155,8 @@ if( cfg == "" ) cfg=home "/.ssh/config"
 if( cfgord == "" ) cfgord=home "/.ssh/.config.order"
 entries=parscfg()
 print "found " entries " host names"
-cmd="help"
+# by setting cmd in the script's argument, you can choose how to start
+if( cmd == "" ) cmd="go"
 while( cmd != "quit" ) {
  if( match( cmd, /^[sS]/ ) ) {
   print config[selection( iorder, hostinfo )]
