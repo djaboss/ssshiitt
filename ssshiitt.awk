@@ -1,15 +1,16 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;6 BombasticBullcrap"
+ print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;7 BombasticBullcrap"
  print "start ssh connections interactively in the terminal"
  print ""
- print "g[o]: select a host and ssh to it"
+ print "g[o] or empty input: select a host and ssh to it"
  print "      (can also be used to show short host info by aborting)"
- print "c[onfig]: show names of configuration files"
+ print "c[onfig]: show names of configuration files and config variables"
+ print "f[ilter]: enter regexp to filter for hostnames or configs"
  print "s[how]: show full config data for a host"
  print "a[ll]: show full config data for all hosts"
  print "q[uit] or .: quit program"
- print "help or empty line: show this help"
+ print "help or ?: show this help"
 }
 
 function finish( ) {
@@ -52,7 +53,9 @@ function selection( selarr, infos,  al, ip ) {
  for( el in selarr ) al++
  while( ip == "" ) {
 # display selection array in descending order
-  for( i=al ; i > 0 ; --i ) printf "%4d  %s  %s\n", i, selarr[i], infos[selarr[i]]
+# but skip empty entries (due to filtering)
+  for( i=al ; i > 0 ; --i ) if( selarr[i] != "" )
+   printf "%4d  %s  %s\n", i, selarr[i], infos[selarr[i]]
   printf "please choose (. to abort)> "
   if( 1 != getline ip ) finish()
 # stay in loop if input does not exist in array
@@ -62,7 +65,7 @@ function selection( selarr, infos,  al, ip ) {
  else return selarr[ip]
 }
 
-function parscfg(  il, oi, host, aun, ahn ) {
+function parscfg(  il, oi, host, aun, ahn, kv ) {
 # read config and config-order files into arrays config and order
 # (global arrays)
  delete config
@@ -121,19 +124,32 @@ function parscfg(  il, oi, host, aun, ahn ) {
 # save existing host name with position oi
 # (i.e everything not matching a host will be ignored)
   if( il in config ) order[il]=++oi
+# else if the line can be split by TAB or SPC, assume key/value pair
+# (NB: currently cannot handle TAB/SPC *in* value!)
+  else if( split( il, kv, /[\t ]/ ) > 1 ) cfgvar[kv[1]]=kv[2]
  }
  close( cfgord )
 # check for all hosts
  for( il in config ) {
-# whether already noted in order list
-# and append if not
+# whether already noted in order list and append if not
   if( !(il in order) ) order[il]=++oi
   }
-# create inverse order list with number as key and host as value
-  delete iorder
-  for( il in order ) iorder[order[il]]=il
 # report number of found hosts (array lengths)
  return oi
+}
+
+# create inverse order list with number as key and host as value
+function makeiorder(  hn, j, fltr ) {
+ delete iorder
+ j=0
+ fltr=cfgvar["hostfilter"]
+ print ": filtering for /" fltr "/ :"
+# test all hostnames: if filter matches for hostname or hostinfo,
+# then include in inverse list
+ for( hn in order ) if( match( order[hn], fltr ) > 0 ||
+                    match( hostinfo[hn], fltr ) > 0 ) iorder[++j]=hn
+# save filtered order
+ saveorder( "" )
 }
 
 # save config order
@@ -145,6 +161,8 @@ function saveorder( hn,  on ) {
   on=iorder[i]
   if( on != hn ) print on >> cfgord
  }
+# save cfgvariables as key/value pairs
+ for( kk in cfgvar ) print kk, cfgvar[kk] >> cfgord
  close( cfgord )
 }
 
@@ -154,6 +172,7 @@ sshcmd="ssh"
 if( cfg == "" ) cfg=home "/.ssh/config"
 if( cfgord == "" ) cfgord=home "/.ssh/.config.order"
 entries=parscfg()
+makeiorder()
 print "found " entries " host names"
 # by setting cmd in the script's argument, you can choose how to start
 if( cmd == "" ) cmd="go"
@@ -167,16 +186,27 @@ while( cmd != "quit" ) {
 ### if you replace "help" by "quit", script will finish afterwards
   cmd="help"
  }
+ if( match( cmd, /^[fF]/ ) ) {
+  filt=cfgvar["hostfilter"]
+  if( filt == "" ) filt="."
+  print "current filter=/" filt "/"
+  printf "enter new (without //) or . to clear or empty to keep> "
+  getline filt
+  if( filt != "" ) cfgvar["hostfilter"]=filt
+# recreate inverse ordered list based on filter
+  makeiorder()
+ }
  if( match( cmd, /^[cC]/ ) ) {
   print "config: " cfg
   print " order: " cfgord
+  for( k in cfgvar ) print " var " k "=" cfgvar[k]
  }
- if( cmd == "help" ) showhelp()
+ if( cmd == "help" || cmd == "?" ) showhelp()
  if( match( cmd, /^[qQ.]/ ) ) cmd="quit"
  else {
   printf ">>> "
   if( 1 != getline cmd ) finish()
-  if( cmd == "" ) cmd="help"
+  if( cmd == "" ) cmd="go"
   }
  }
 }
