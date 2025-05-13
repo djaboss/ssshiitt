@@ -22,7 +22,7 @@ function finish( ) {
 # select a host from list and launch ssh
 function gohost(  hn, un, sshc ) {
 # get hostname
- hn=selection( iorder, hostname )
+ hn=selection( iorder, hostname, supplist )
 # empty selection: abort
  if( hn != "" ) {
   print "preparing for 'ssh " hn "' as " hostinfo[hn]
@@ -45,16 +45,17 @@ function gohost(  hn, un, sshc ) {
 
 # list selarr (number, text) and get selection
 # (optionally displaying additional data from infos array,
-# with key from selarr values)
-function selection( selarr, infos,  al, ip ) {
+# with key from selarr values, and suppressing keys from hide)
+function selection( selarr, infos, hide,  al, ip ) {
  ip=""
 # measure array length
  al=0
  for( el in selarr ) al++
  while( ip == "" ) {
 # display selection array in descending order
-# but skip empty entries (due to filtering)
-  for( i=al ; i > 0 ; --i ) if( selarr[i] != "" )
+# but skip entries from hide and empty ones
+  for( i=al ; i > 0 ; --i ) if( !(selarr[i] in hide) &&
+   selarr[i] != "" )
    printf "%4d  %s  %s\n", i, selarr[i], infos[selarr[i]]
   printf "please choose (. to abort)> "
   if( 1 != getline ip ) finish()
@@ -131,22 +132,11 @@ function parscfg(  il, oi, host, aun, ahn, kv ) {
  close( cfgord )
 # check for all hosts whether noted in order list and append if not
  for( il in config ) if( !(il in order) ) order[il]=++oi
- makeiorder()
+# generate inverse order list
+ for( hn in order ) iorder[order[hn]]=hn
+ makehide()
 # report number of found hosts (array lengths)
  return oi
-}
-
-# create inverse order list with number as key and host as value
-function makeiorder(  hn, j, fltr ) {
- delete iorder
- fltr=cfgvar["hostfilter"]
- print ": filtering for /" fltr "/ :"
-# test all hostnames: if filter matches for hostname or config,
-# then include in inverse list
- for( hn in order ) if( match( hn, fltr ) > 0 ||
-   match( config[hn], fltr ) > 0 ) iorder[order[hn]]=hn
-# save filtered order
- saveorder( "" )
 }
 
 # save config order
@@ -163,6 +153,20 @@ function saveorder( hn,  on ) {
  close( cfgord )
 }
 
+# make list of hidden entries
+function makehide(  filtr, hn ) {
+ fltr=cfgvar["hostfilter"]
+# if no filter is defined, use wildcard . (i.e none)
+ if( fltr == "" ) fltr="."
+ print ": filtering for /" fltr "/ :"
+# clear global list of suppressed host numbers
+ delete supplist
+# only add to list if neither hostname nor config match
+ for( hn in order ) if( match( hn, fltr ) == 0 &&
+  match( config[hn], fltr ) == 0 ) supplist[hn]=order[hn]
+ saveorder()
+}
+
 BEGIN {
 home=ENVIRON["HOME"]
 sshcmd="ssh"
@@ -174,7 +178,7 @@ print "found " entries " host names"
 if( cmd == "" ) cmd="go"
 while( cmd != "quit" ) {
  if( match( cmd, /^[sS]/ ) ) {
-  print config[selection( iorder, hostinfo )]
+  print config[selection( iorder, hostinfo, supplist )]
  }
  if( match( cmd, /^[aA]/ ) ) for( hn in config ) print "- " hn " " config[hn]
  if( match( cmd, /^[gG]/ ) ) {
@@ -189,8 +193,7 @@ while( cmd != "quit" ) {
   printf "enter new (without //) or . to clear or empty to keep> "
   getline fltr
   if( fltr != "" ) cfgvar["hostfilter"]=fltr
-# recreate inverse ordered list based on filter
-  makeiorder()
+ makehide()
  }
  if( match( cmd, /^[cC]/ ) ) {
   print "config: " cfg
