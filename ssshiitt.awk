@@ -129,11 +129,9 @@ function parscfg(  il, oi, host, aun, ahn, kv ) {
   else if( split( il, kv, /[\t ]/ ) > 1 ) cfgvar[kv[1]]=kv[2]
  }
  close( cfgord )
-# check for all hosts
- for( il in config ) {
-# whether already noted in order list and append if not
-  if( !(il in order) ) order[il]=++oi
-  }
+# check for all hosts whether noted in order list and append if not
+ for( il in config ) if( !(il in order) ) order[il]=++oi
+ makeiorder()
 # report number of found hosts (array lengths)
  return oi
 }
@@ -141,13 +139,12 @@ function parscfg(  il, oi, host, aun, ahn, kv ) {
 # create inverse order list with number as key and host as value
 function makeiorder(  hn, j, fltr ) {
  delete iorder
- j=0
  fltr=cfgvar["hostfilter"]
  print ": filtering for /" fltr "/ :"
-# test all hostnames: if filter matches for hostname or hostinfo,
+# test all hostnames: if filter matches for hostname or config,
 # then include in inverse list
- for( hn in order ) if( match( order[hn], fltr ) > 0 ||
-                    match( hostinfo[hn], fltr ) > 0 ) iorder[++j]=hn
+ for( hn in order ) if( match( hn, fltr ) > 0 ||
+   match( config[hn], fltr ) > 0 ) iorder[order[hn]]=hn
 # save filtered order
  saveorder( "" )
 }
@@ -172,7 +169,6 @@ sshcmd="ssh"
 if( cfg == "" ) cfg=home "/.ssh/config"
 if( cfgord == "" ) cfgord=home "/.ssh/.config.order"
 entries=parscfg()
-makeiorder()
 print "found " entries " host names"
 # by setting cmd in the script's argument, you can choose how to start
 if( cmd == "" ) cmd="go"
@@ -187,12 +183,12 @@ while( cmd != "quit" ) {
   cmd="help"
  }
  if( match( cmd, /^[fF]/ ) ) {
-  filt=cfgvar["hostfilter"]
-  if( filt == "" ) filt="."
-  print "current filter=/" filt "/"
+  fltr=cfgvar["hostfilter"]
+  if( fltr == "" ) fltr="."
+  print "current filter=/" fltr "/"
   printf "enter new (without //) or . to clear or empty to keep> "
-  getline filt
-  if( filt != "" ) cfgvar["hostfilter"]=filt
+  getline fltr
+  if( fltr != "" ) cfgvar["hostfilter"]=fltr
 # recreate inverse ordered list based on filter
   makeiorder()
  }
