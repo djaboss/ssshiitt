@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.7_segfault-beta_0;7 BombasticBullcrap"
+ print "ssshiitt.awk version 0.5.2.7_segfault-beta_1;0 FlailingFlatulence"
  print "start ssh connections interactively in the terminal"
  print ""
  print "g[o] or empty input: select a host and ssh to it"
@@ -32,7 +32,7 @@ function gohost(  hn, un, sshc ) {
 # default: ssh hostname
   if( un == "" ) sshc=sshcmd " " hn
 # else set explicit username
-  else sshc=sshcmd " -u " un " " hn
+  else sshc=sshcmdu " " un " " hn
   print "launching command " sshc
   system( sshc )
   print ""
@@ -170,6 +170,7 @@ function makehide(  filtr, hn ) {
 BEGIN {
 home=ENVIRON["HOME"]
 sshcmd="ssh"
+sshcmdu="ssh -l"
 if( cfg == "" ) cfg=home "/.ssh/config"
 if( cfgord == "" ) cfgord=home "/.ssh/.config.order"
 entries=parscfg()
