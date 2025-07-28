@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.7_segfault-beta_1;0 FlailingFlatulence"
+ print "ssshiitt.awk version 0.5.2.8_segfault-beta_1;0 FlailingFlatulence"
  print "start ssh connections interactively in the terminal"
  print ""
  print "g[o] or empty input: select a host and ssh to it"
@@ -28,13 +28,14 @@ function gohost(  hn, un, sshc ) {
   print "preparing for 'ssh " hn "' as " hostinfo[hn]
   printf " other username, empty for same, or . to abort> "
   if( 1 != getline un ) finish()
-  if( un == "." ) return
+  if( un != "." ) {
 # default: ssh hostname
-  if( un == "" ) sshc=sshcmd " " hn
+   if( un == "" ) sshc=sshcmd " " hn
 # else set explicit username
-  else sshc=sshcmdu " " un " " hn
-  print "launching command " sshc
-  system( sshc )
+   else sshc=sshcmdu " " un " " hn
+   print "launching command " sshc
+   system( sshc )
+  }
   print ""
 # update config order
   saveorder( hn )
