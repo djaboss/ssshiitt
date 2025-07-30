@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.8_segfault-beta_1;0 FlailingFlatulence"
+ print "ssshiitt.awk version 0.5.2.9_segfault-beta_1;0 GhastlyGastritis"
  print "start ssh connections interactively in the terminal"
  print ""
  print "g[o] or empty input: select a host and ssh to it"
@@ -14,6 +14,7 @@ function showhelp( ) {
 }
 
 function finish( ) {
+ saveorder()
  print ""
  print ":: script aborted ::"
  exit
@@ -123,12 +124,13 @@ function parscfg(  il, oi, host, aun, ahn, kv ) {
  oi=0
 # read file with host lines
  while( 1 == getline il <cfgord ) {
-# save existing host name with position oi
+# if the line can be split by TAB or SPC, assume key/value pair
+# (NB: cannot handle TAB/SPC *in* value!)
+  if( split( il, kv, /[\t ]/ ) > 1 ) cfgvar[kv[1]]=kv[2]
+# else save existing host name with position oi
 # (i.e everything not matching a host will be ignored)
-  if( il in config ) order[il]=++oi
-# else if the line can be split by TAB or SPC, assume key/value pair
-# (NB: currently cannot handle TAB/SPC *in* value!)
-  else if( split( il, kv, /[\t ]/ ) > 1 ) cfgvar[kv[1]]=kv[2]
+  else if( il in config ) order[il]=++oi
+   else print ": unknown config hostname", il
  }
  close( cfgord )
 # check for all hosts whether noted in order list and append if not
