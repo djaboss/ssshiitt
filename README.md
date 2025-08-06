@@ -1,10 +1,12 @@
 # ssshiitt
 
-**start ssh connections interactively in the terminal**
+**handle ssh connections interactively in the terminal**
+
+current version: HolyHemorrhage
 
 ## `ssshiitt.awk`
 
-*POSIX awk version of a terminal interactive selection script for ssh config*
+*pronounced "she talk" -- POSIX awk version of a terminal interactive selection script for ssh config*
 
 The script immediately starts with the "go" command for selecting a host for connecting to, as this is its main purpose.
 This can be changed either definitely in the script (search for the line containing 'cmd="go"') or per run by setting the cmd variable on the command line (e.g with a '-v cmd=help' argument).
