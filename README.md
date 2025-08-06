@@ -1,6 +1,6 @@
 # ssshiitt
 
-**handle ssh connections interactively in the terminal**
+**Start SSH connections Interactively In The Terminal**
 
 current version: HolyHemorrhage
 

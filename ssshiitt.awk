@@ -1,7 +1,7 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
  print "ssshiitt.awk version 0.5.2.9_segfault-gamma_7;4 HolyHemorrhage"
- print "handle ssh connections interactively in the terminal"
+ print "Start SSH connections Interactively In The Terminal"
  print ""
  print "g[o] or empty input: select a host and ssh to it"
  print "      (can also be used to show short host info by aborting)"
