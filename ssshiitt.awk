@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.9_segfault-gamma_7;4 HolyHemorrhage"
+ print "ssshiitt.awk version 0.5.2.9_segfault-gamma_7;5 HolyHemorrhage"
  print "Start SSH connections Interactively In The Terminal"
  print ""
  print "g[o] or empty input: select a host and ssh to it"
@@ -131,7 +131,7 @@ function parscfg(  il, oi, host, aun, ahn, kv ) {
 # else save existing host name with position oi
 # (i.e everything not matching a host will be ignored)
   else if( il in config ) order[il]=++oi
-   else print ": unknown config hostname", il
+   else print ": unknown config hostname '" il "'"
  }
  close( cfgord )
 # check for all hosts whether noted in order list and append if not
