@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.9_segfault-gamma_7;5 HolyHemorrhage"
+ print "ssshiitt.awk version 0.5.2.9_segfault-gamma_8;2 IrritatingIrony"
  print "Start SSH connections Interactively In The Terminal"
  print ""
  print "g[o] or empty input: select a host and ssh to it"
@@ -15,8 +15,7 @@ function showhelp( ) {
 
 function finish( ) {
  saveorder()
- print ""
- print ":: script aborted ::"
+ print ":: script finished ::"
  exit
 }
 
@@ -60,10 +59,10 @@ function selection( selarr, infos, hide,  al, ip ) {
   for( i=al ; i > 0 ; --i ) if( !(selarr[i] in hide) &&
    selarr[i] != "" )
    printf "%4d  %s  %s\n", i, selarr[i], infos[selarr[i]]
-  printf "please choose (. to abort)> "
+  printf "please choose host to connect (q to abort)> "
   if( 1 != getline ip ) finish()
 # stay in loop if input does not exist in array
-  if( ip != "." && selarr[ip] == "" ) ip=""
+  if( ip != "q" && selarr[ip] == "" ) ip=""
  }
  if( ip == "." ) return ""
  else return selarr[ip]
@@ -131,7 +130,7 @@ function parscfg(  il, oi, host, aun, ahn, kv ) {
 # else save existing host name with position oi
 # (i.e everything not matching a host will be ignored)
   else if( il in config ) order[il]=++oi
-   else print ": unknown config hostname '" il "'"
+   else if( il != "" ) print ": unknown config hostname '" il "'"
  }
  close( cfgord )
 # check for all hosts whether noted in order list and append if not
@@ -185,7 +184,7 @@ while( cmd != "quit" ) {
  if( match( cmd, /^[sS]/ ) ) {
   print config[selection( iorder, hostinfo, supplist )]
  }
- if( match( cmd, /^[aA]/ ) ) for( hn in config ) print "- " hn " " config[hn]
+ if( match( cmd, /^[aA]/ ) ) for( hn in config ) print "* " hn " " config[hn]
  if( match( cmd, /^[gG]/ ) ) {
   gohost()
 ### if you replace "help" by "quit", script will finish afterwards
@@ -213,4 +212,5 @@ while( cmd != "quit" ) {
   if( cmd == "" ) cmd="go"
   }
  }
+ finish()
 }
