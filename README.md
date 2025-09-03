@@ -2,7 +2,7 @@
 
 **Start SSH connections Interactively In The Terminal**
 
-current version: HolyHemorrhage
+current version: IrritatingIrony
 
 ## `ssshiitt.awk`
 
@@ -37,4 +37,4 @@ It is possible to filter the hosts with a standard awk regexp.
 The filter setting will be saved in the file for the selection order
 and retrieved from there at the next run of the script.
 
-*Note:* CTRL-D at a prompt closes STDIN and therefore cuts off the script from keyboard control. This is catched, but the script will then print an abort warning and immediately exit, as it becomes uncontrollable.
+*Note:* CTRL-D at a prompt closes STDIN and therefore cuts off the script from keyboard control. This is catched, and the script will then print a warning and immediately exit.
