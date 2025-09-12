@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.9_segfault-gamma_8;2 IrritatingIrony"
+ print "ssshiitt.awk version 0.5.2.9_segfault-gamma_8;3 IrritatingIrony"
  print "Start SSH connections Interactively In The Terminal"
  print ""
  print "g[o] or empty input: select a host and ssh to it"
@@ -82,7 +82,7 @@ function parscfg(  il, oi, host, aun, ahn, kv ) {
 # remove leading whitespace
   sub(/^[ \t]*/, "", il)
 # replace first whitespace separator (one or more SPC or TAB) by a single TAB
-  sub(/[ \t]{1,}/, "\t", il)
+  sub(/[ \t][ \t]*/, "\t", il)
 # "host" line
   if( match( il, /^[hH][oO][sS][tT]\t/ ) == 1 ) {
 # delete everything up to TAB
