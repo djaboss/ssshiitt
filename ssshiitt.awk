@@ -1,6 +1,6 @@
 #!/usr/bin/env -S awk -f
 function showhelp( ) {
- print "ssshiitt.awk version 0.5.2.9_segfault-gamma_8;3 IrritatingIrony"
+ print "ssshiitt.awk version 0.5.3.1_segfault-delta_0;7 JollyJoker"
  print "Start SSH connections Interactively In The Terminal"
  print ""
  print "g[o] or empty input: select a host and ssh to it"
@@ -15,7 +15,7 @@ function showhelp( ) {
 
 function finish( ) {
  saveorder()
- print ":: script finished ::"
+ print ""
  exit
 }
 
@@ -35,7 +35,8 @@ function gohost(  hn, un, sshc ) {
    else sshc=sshcmdu " " un " " hn
    print "launching command " sshc
    system( sshc )
-   system( "date -u" )
+   print ""
+   system( "date -u +:%c" )
   }
   print ""
 # update config order
